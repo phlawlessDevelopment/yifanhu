@@ -77,16 +77,14 @@ public class Main {
                 true);
         addArg("output", "Output file", true);
         addArg("iterations", "Number of iterations. Mutually exclusive with --targetChangePerNode", true);
-        addArg("optDist", "optimal distance between nodes", true);
-        addArg("step", "", true);
-        addArg("stepRatio", "", true);
-        addArg("initialStep", "", true);
-        addArg("converged", "", true);
-        addArg("barnesHutTheta", "", true);
-        addArg("adaptiveCooling", "", true);
-        addArg("quadTreeMaxLevel", "", true);
-        addArg("relativeStrength", "", true);
-        addArg("convergenceThreshold", "", true);
+        addArg("optimalDistance", "The natural length of the springs. Bigger values mean nodes will be farther apart.", true);
+        addArg("stepRatio", "The ratio used to update the step size across iterations.", true);
+        addArg("initialStep", "The initial step size used in the integration phase. Set this value to a meaningful size compared to the optimal distance (10% is a good starting point).", true);
+        addArg("barnesHutTheta", "The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy.", true);
+        addArg("adaptiveCooling", "Controls the use of adaptive cooling. It is used help the layout algoritm to avoid energy local minima.", true);
+        addArg("quadTreeMaxLevel", "The maximum level to be used in the quadtree representation. Greater values mean more accuracy.", true);
+        addArg("relativeStrength", "The relative strength between electrical force (repulsion) and spring force (attraction).", true);
+        addArg("convergenceThreshold", "Relative energy convergence threshold. Smaller values mean more accuracy.", true);
 
         for (int i = 0; i < args.length; i++) {
             Arg a = argsMap.get(args[i].toLowerCase());
@@ -98,7 +96,6 @@ public class Main {
             a.value = value;
         }
 
-        int nsteps = 0;
         File file = new File(getArg("input"));
         Set<String> formats = new HashSet<>();
         formats.add("txt");
@@ -110,8 +107,57 @@ public class Main {
 
         String output = getArg("output");
 
-        if (getArg("nsteps") != null) {
-            nsteps = Integer.parseInt(getArg("nsteps"));
+        int iterations = 50;
+
+        if (getArg("iterations") != null) {
+           iterations  = Integer.parseInt(getArg("iterations"));
+        }
+
+        float optimalDistance = 100f;
+
+        if(getArg("optimalDistance") != null){
+            optimalDistance  = Float.parseFloat(getArg("optimalDistance"));
+        }
+        float stepRatio = 0.95f;
+
+        if(getArg("stepRatio") != null){
+            stepRatio  = Float.parseFloat(getArg("stepRatio"));
+        }
+
+        float initialStep = 20.0f;
+
+        if(getArg("initialStep") != null){
+            initialStep  = Float.parseFloat(getArg("initialStep"));
+        }
+
+        float barnesHutTheta = 1.2f;
+
+        if(getArg("barnesHutTheta") != null){
+            barnesHutTheta  = Float.parseFloat(getArg("barnesHutTheta"));
+        }
+
+        Boolean adaptiveCooling = true;
+
+        if(getArg("adaptiveCooling") != null){
+            adaptiveCooling  = Boolean.parseBoolean(getArg("adaptiveCooling"));
+        }
+
+        int quadTreeMaxLevel = 10;
+
+        if(getArg("quadTreeMaxLevel") != null){
+            quadTreeMaxLevel  = Integer.parseInt(getArg("quadTreeMaxLevel"));
+        }
+
+        float relativeStrength = 0.2f;
+
+        if(getArg("relativeStrength") != null){
+            relativeStrength  = Integer.parseInt(getArg("relativeStrength"));
+        }
+
+        float convergenceThreshold = 1.0E-4f;
+
+        if(getArg("convergenceThreshold") != null){
+            convergenceThreshold  = Integer.parseInt(getArg("convergenceThreshold"));
         }
 
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
@@ -130,16 +176,12 @@ public class Main {
         }
         importController.process(container, new DefaultProcessor(), workspace);
 
-        // visible view
         YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
         layout.setGraphModel(graphModel);
         layout.resetPropertiesValues();
-
         layout.setOptimalDistance(optimalDistance);
-        layout.setStep(step);
         layout.setStepRatio(stepRatio);
         layout.setInitialStep(initialStep);
-        layout.setConverged(converged);
         layout.setBarnesHutTheta(barnesHutTheta);
         layout.setAdaptiveCooling(adaptiveCooling);
         layout.setQuadTreeMaxLevel(quadTreeMaxLevel);
@@ -147,7 +189,7 @@ public class Main {
         layout.setConvergenceThreshold(convergenceThreshold);
 
         layout.initAlgo();
-        for (int i = 0; i < nsteps && layout.canAlgo(); i++) {
+        for (int i = 0; i < iterations && layout.canAlgo(); i++) {
             layout.goAlgo();
         }
         layout.endAlgo();
