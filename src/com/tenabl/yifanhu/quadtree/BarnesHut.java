@@ -40,66 +40,65 @@
  Portions Copyrighted 2011 Gephi Consortium.
  */
 
-package yifanHu;
-
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import org.gephi.layout.plugin.force.ProportionalDisplacement;
-import org.gephi.layout.spi.Layout;
-import org.gephi.layout.spi.LayoutBuilder;
-import org.gephi.layout.spi.LayoutUI;
-import org.openide.util.NbBundle;
-import org.openide.util.lookup.ServiceProvider;
+import org.gephi.graph.api.Node;
+import org.gephi.layout.plugin.ForceVectorUtils;
+import org.gephi.layout.plugin.force.AbstractForce;
+import org.gephi.layout.plugin.force.ForceVector;
 
 /**
+ * Barnes-Hut's O(n log n) force calculation algorithm.
+ *
  * @author Helder Suzuki
  */
-@ServiceProvider(service = LayoutBuilder.class)
-public class YifanHuProportional implements LayoutBuilder {
+public class BarnesHut {
 
-    private final YifanHuProportionalLayoutUI ui = new YifanHuProportionalLayoutUI();
+    /*
+     * theta is the parameter for Barnes-Hut opening criteria
+     */
+    private float theta = (float) 1.2;
+    private final AbstractForce force;
 
-    @Override
-    public YifanHuLayout buildLayout() {
-        YifanHuLayout layout = new YifanHuLayout(this, new ProportionalDisplacement(1f));
-        return layout;
+    public BarnesHut(AbstractForce force) {
+        this.force = force;
     }
 
-    @Override
-    public String getName() {
-        return NbBundle.getMessage(YifanHuProportional.class, "YifanHuProportional.name");
-    }
-
-    @Override
-    public LayoutUI getUI() {
-        return ui;
-    }
-
-    private static class YifanHuProportionalLayoutUI implements LayoutUI {
-
-        @Override
-        public String getDescription() {
-            return NbBundle.getMessage(YifanHuProportional.class, "YifanHuProportional.description");
-        }
-
-        @Override
-        public Icon getIcon() {
+    /*
+     * Calculates the ForceVector on node against every other node represented
+     * in the tree with respect to force.
+     */
+    public ForceVector calculateForce(Node node, QuadTree tree) {
+        if (tree.mass() <= 0) {
             return null;
         }
 
-        @Override
-        public JPanel getSimplePanel(Layout layout) {
-            return null;
+        float distance = ForceVectorUtils.distance(node, tree);
+
+        if (tree.isIsLeaf() || tree.mass() == 1) {
+            // this is probably the case where tree has only the node.
+            if (distance < 1e-8) {
+                return null;
+            }
+            return force.calculateForce(node, tree);
         }
 
-        @Override
-        public int getQualityRank() {
-            return 3;
+        if (distance * theta > tree.size()) {
+            ForceVector f = force.calculateForce(node, tree, distance);
+            f.multiply(tree.mass());
+            return f;
         }
 
-        @Override
-        public int getSpeedRank() {
-            return 4;
+        ForceVector f = new ForceVector();
+        for (QuadTree child : tree.getChildren()) {
+            f.add(calculateForce(node, child));
         }
+        return f;
+    }
+
+    public float getTheta() {
+        return theta;
+    }
+
+    public void setTheta(float theta) {
+        this.theta = theta;
     }
 }

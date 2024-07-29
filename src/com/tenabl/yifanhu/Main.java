@@ -1,4 +1,3 @@
-
 import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
@@ -9,14 +8,13 @@ import org.gephi.io.importer.api.EdgeDirectionDefault;
 import org.gephi.io.importer.api.ImportController;
 import org.gephi.io.processor.plugin.DefaultProcessor;
 import org.gephi.layout.plugin.force.StepDisplacement;
+import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.openide.util.Lookup;
 
 import java.io.*;
 import java.util.*;
-
-import yifanHu.YifanHuLayout;
 
 public class Main {
 
@@ -77,14 +75,24 @@ public class Main {
                 true);
         addArg("output", "Output file", true);
         addArg("iterations", "Number of iterations. Mutually exclusive with --targetChangePerNode", true);
-        addArg("optimalDistance", "The natural length of the springs. Bigger values mean nodes will be farther apart.", true);
+        addArg("optimalDistance", "The natural length of the springs. Bigger values mean nodes will be farther apart.",
+                true);
         addArg("stepRatio", "The ratio used to update the step size across iterations.", true);
-        addArg("initialStep", "The initial step size used in the integration phase. Set this value to a meaningful size compared to the optimal distance (10% is a good starting point).", true);
-        addArg("barnesHutTheta", "The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy.", true);
-        addArg("adaptiveCooling", "Controls the use of adaptive cooling. It is used help the layout algoritm to avoid energy local minima.", true);
-        addArg("quadTreeMaxLevel", "The maximum level to be used in the quadtree representation. Greater values mean more accuracy.", true);
-        addArg("relativeStrength", "The relative strength between electrical force (repulsion) and spring force (attraction).", true);
-        addArg("convergenceThreshold", "Relative energy convergence threshold. Smaller values mean more accuracy.", true);
+        addArg("initialStep",
+                "The initial step size used in the integration phase. Set this value to a meaningful size compared to the optimal distance (10% is a good starting point).",
+                true);
+        addArg("barnesHutTheta",
+                "The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy.", true);
+        addArg("adaptiveCooling",
+                "Controls the use of adaptive cooling. It is used help the layout algoritm to avoid energy local minima.",
+                true);
+        addArg("quadTreeMaxLevel",
+                "The maximum level to be used in the quadtree representation. Greater values mean more accuracy.",
+                true);
+        addArg("relativeStrength",
+                "The relative strength between electrical force (repulsion) and spring force (attraction).", true);
+        addArg("convergenceThreshold", "Relative energy convergence threshold. Smaller values mean more accuracy.",
+                true);
 
         for (int i = 0; i < args.length; i++) {
             Arg a = argsMap.get(args[i].toLowerCase());
@@ -110,54 +118,54 @@ public class Main {
         int iterations = 50;
 
         if (getArg("iterations") != null) {
-           iterations  = Integer.parseInt(getArg("iterations"));
+            iterations = Integer.parseInt(getArg("iterations"));
         }
 
         float optimalDistance = 100f;
 
-        if(getArg("optimalDistance") != null){
-            optimalDistance  = Float.parseFloat(getArg("optimalDistance"));
+        if (getArg("optimalDistance") != null) {
+            optimalDistance = Float.parseFloat(getArg("optimalDistance"));
         }
         float stepRatio = 0.95f;
 
-        if(getArg("stepRatio") != null){
-            stepRatio  = Float.parseFloat(getArg("stepRatio"));
+        if (getArg("stepRatio") != null) {
+            stepRatio = Float.parseFloat(getArg("stepRatio"));
         }
 
         float initialStep = 20.0f;
 
-        if(getArg("initialStep") != null){
-            initialStep  = Float.parseFloat(getArg("initialStep"));
+        if (getArg("initialStep") != null) {
+            initialStep = Float.parseFloat(getArg("initialStep"));
         }
 
         float barnesHutTheta = 1.2f;
 
-        if(getArg("barnesHutTheta") != null){
-            barnesHutTheta  = Float.parseFloat(getArg("barnesHutTheta"));
+        if (getArg("barnesHutTheta") != null) {
+            barnesHutTheta = Float.parseFloat(getArg("barnesHutTheta"));
         }
 
         Boolean adaptiveCooling = true;
 
-        if(getArg("adaptiveCooling") != null){
-            adaptiveCooling  = Boolean.parseBoolean(getArg("adaptiveCooling"));
+        if (getArg("adaptiveCooling") != null) {
+            adaptiveCooling = Boolean.parseBoolean(getArg("adaptiveCooling"));
         }
 
         int quadTreeMaxLevel = 10;
 
-        if(getArg("quadTreeMaxLevel") != null){
-            quadTreeMaxLevel  = Integer.parseInt(getArg("quadTreeMaxLevel"));
+        if (getArg("quadTreeMaxLevel") != null) {
+            quadTreeMaxLevel = Integer.parseInt(getArg("quadTreeMaxLevel"));
         }
 
         float relativeStrength = 0.2f;
 
-        if(getArg("relativeStrength") != null){
-            relativeStrength  = Integer.parseInt(getArg("relativeStrength"));
+        if (getArg("relativeStrength") != null) {
+            relativeStrength = Integer.parseInt(getArg("relativeStrength"));
         }
 
         float convergenceThreshold = 1.0E-4f;
 
-        if(getArg("convergenceThreshold") != null){
-            convergenceThreshold  = Integer.parseInt(getArg("convergenceThreshold"));
+        if (getArg("convergenceThreshold") != null) {
+            convergenceThreshold = Integer.parseInt(getArg("convergenceThreshold"));
         }
 
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);

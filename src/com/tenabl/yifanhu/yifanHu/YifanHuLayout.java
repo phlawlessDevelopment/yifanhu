@@ -40,8 +40,6 @@
  Portions Copyrighted 2011 Gephi Consortium.
  */
 
-package yifanHu;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.gephi.graph.api.Edge;

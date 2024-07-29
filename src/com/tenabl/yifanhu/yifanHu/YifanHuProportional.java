@@ -40,11 +40,9 @@
  Portions Copyrighted 2011 Gephi Consortium.
  */
 
-package yifanHu;
-
 import javax.swing.Icon;
 import javax.swing.JPanel;
-import org.gephi.layout.plugin.force.StepDisplacement;
+import org.gephi.layout.plugin.force.ProportionalDisplacement;
 import org.gephi.layout.spi.Layout;
 import org.gephi.layout.spi.LayoutBuilder;
 import org.gephi.layout.spi.LayoutUI;
@@ -55,19 +53,19 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Helder Suzuki
  */
 @ServiceProvider(service = LayoutBuilder.class)
-public class YifanHu implements LayoutBuilder {
+public class YifanHuProportional implements LayoutBuilder {
 
-    private final YifanHuLayoutUI ui = new YifanHuLayoutUI();
+    private final YifanHuProportionalLayoutUI ui = new YifanHuProportionalLayoutUI();
 
     @Override
     public YifanHuLayout buildLayout() {
-        YifanHuLayout layout = new YifanHuLayout(this, new StepDisplacement(1f));
+        YifanHuLayout layout = new YifanHuLayout(this, new ProportionalDisplacement(1f));
         return layout;
     }
 
     @Override
     public String getName() {
-        return NbBundle.getMessage(YifanHu.class, "YifanHu.name");
+        return NbBundle.getMessage(YifanHuProportional.class, "YifanHuProportional.name");
     }
 
     @Override
@@ -75,11 +73,11 @@ public class YifanHu implements LayoutBuilder {
         return ui;
     }
 
-    private static class YifanHuLayoutUI implements LayoutUI {
+    private static class YifanHuProportionalLayoutUI implements LayoutUI {
 
         @Override
         public String getDescription() {
-            return NbBundle.getMessage(YifanHu.class, "YifanHu.description");
+            return NbBundle.getMessage(YifanHuProportional.class, "YifanHuProportional.description");
         }
 
         @Override
