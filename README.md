@@ -2,21 +2,23 @@
 
 ## Features
 
-- Parallel Barnes-Hut tree building
-- Computes total distance that all points move at each iteration in order to determine when the algorithm has converged
-- Parallel force, attraction, and speed computations
-- Option to rebuild Barnes-Hut tree every n iterations
-- Option to update Barnes-Hut tree centers every n iterations
+- Multilevel Layout: Combines the benefits of force-directed algorithms with multilevel techniques, allowing for efficient layout of large graphs.
+- Fast Convergence: Utilizes an adaptive cooling scheme to enhance convergence speed, making it suitable for large datasets.
+- Force-Directed Model: Applies repulsive and attractive forces between nodes, ensuring a natural and visually appealing layout.
+- Complexity Reduction: Reduces computational complexity to O(NlogN)
+- O(NlogN) by approximating distant nodes as super-nodes, allowing for efficient processing of large networks.
+- Customizable Parameters: Offers adjustable parameters such as optimal distance, step size, and gravity, enabling fine-tuning of the layout for specific graph characteristics.
+- Automatic Stopping: The algorithm automatically determines when to stop based on convergence criteria, simplifying user interaction.
 - Command line interface 
 
 ## Installation
-Download gephi-toolkit-0.9.2-all.jar and forceatlas2.jar from https://github.com/klarman-cell-observatory/forceatlas2/releases
+Download gephi-toolkit-0.9.2-all.jar and yifanhu.jar from https://github.com/phlawlessDevelopment/yifanhu/releases
 
 
 ## Command Line Usage
 
 ```
-java -Djava.awt.headless=true -Xmx8g -cp forceatlas2.jar:gephi-toolkit-0.9.2-all.jar kco.forceatlas2.Main flags 
+java -Djava.awt.headless=true -Xmx8g -cp yifanhu.jar:gephi-toolkit-0.9.2-all.jar Main flags 
 ```
 
 where flags are
@@ -25,25 +27,16 @@ Flag | Description | Default Value
 --- | --- | ---
 --input | Input graph in one of Gephi input file formats https://gephi.org/users/supported-graph-formats/ |
 --output | Output file | 
---nsteps | Number of iterations. Mutually exclusive with --targetChangePerNode | 
---targetChangePerNode | Target distance change per node before stop the algorithm. Mutually exclusive with --nsteps | 
---targetSteps | Maximum number of iterations before stopping the algoritm. This option is together with --targetChangePerNode | 10000
---2d | Whether to produce a 2d layout | false
---directed | Whether input graph is directed | false
---nthreads | Number of threads to use. | All cores
---format | Output file format. One of csv, gdf, gexf, gml, graphml, pajek, txt | txt
---coords | Tab separated file containing initial coordinates with headers id, x, y, and, z | 
---seed | Seed for random number generation for initial node position | timestamp
---barnesHutSplits | Rounds of splits to use for Barnes-Hut tree building. Number of regions after splitting is 4^barnesHutSplits for 2D and 8^barnesHutSplits for 3D | 
---barnesHutTheta | Theta of the Barnes Hut optimization | 1.2
---barnesHutUpdateIter | Update Barnes-Hut tree every barnesHutUpdateIter iterations | 1
---updateCenter | Update Barnes-Hut region centers when not rebuilding Barnes-Hut tree | false
---jitterTolerance  | How much swinging you allow. Above 1 discouraged. Lower gives less speed and more precision. | 1.0
---linLogMode | Switch ForceAtlas' model from lin-lin to lin-log (tribute to Andreas Noack). Makes clusters more tight. | false
---scalingRatio | How much repulsion you want. More makes a more sparse graph | 2.0 if # nodes >= 100, otherwise 10.0
---gravity | Attracts nodes to the center | 1.0
---strongGravityMode | A stronger gravity law | false
---outboundAttractionDistribution | Distributes attraction along outbound edges. Hubs attract less and thus are pushed to the borders. | false
+--iterations | Number of iterations | 50
+--optimalDistance | The natural length of the springs. Bigger values mean nodes will be farther apart | 100f
+--barnesHutTheta | Theta of the Barnes Hut optimization | 1.2f
+--stepRatio | The ratio used to update the step size across iterations | 0.95f 
+--initialStep | The initial step size used in the integration phase. Set this value to a meaningful size compared to the optimal distance (10% is a good starting point) | 20.0f
+--barnesHutTheta | The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy | 1.2f
+--adaptiveCooling | Controls the use of adaptive cooling. It is used help the layout algoritm to avoid energy local minima | true 
+--quadTreeMaxLevel | The maximum level to be used in the quadtree representation. Greater values mean more accuracy | 10
+--relativeStrength | The relative strength between electrical force (repulsion) and spring force (attraction) | 0.2f
+--convergenceThreshold | Relative energy convergence threshold. Smaller values mean more accuracy | 1.0E-4f
 
 
 ## Example Datasets
