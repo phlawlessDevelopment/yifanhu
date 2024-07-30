@@ -1,4 +1,4 @@
-# Multithreaded [Gephi](https://gephi.org/) Force Atlas2 Layout in 2 or 3-d
+# [Gephi](https://gephi.org/) Yifanhu Layout
 
 ## Features
 
